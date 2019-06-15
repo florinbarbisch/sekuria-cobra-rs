@@ -49,55 +49,17 @@ void setup() {
 }
 
 void loop() {
-  for(int i = 0; i < 20; i++) {
-    digitalWrite(transmissionDirection, 0);
-    digitalWrite(m0, 1);
-    digitalWrite(m1, 0);
-    digitalWrite(m2, 0);
-    writeVollschritt();
-  }
-  for(int i = 0; i < 20; i++) {
-    digitalWrite(transmissionDirection, 0);
-    digitalWrite(m0, 1);
-    digitalWrite(m1, 0);
-    digitalWrite(m2, 0);
-    writeVollschrittR();
-  }
+  
 }
 
-void writeVollschritt() {
-  for (int i = 0; i < 4; i++) {
-    digitalWrite(d3, vollschritt[i][0]);
-    digitalWrite(d2, vollschritt[i][1]);
-    digitalWrite(d1, vollschritt[i][2]);
-    digitalWrite(d0, vollschritt[i][3]);
-    delay(17);
-  }
-}
-void writeVollschrittR() {
-  for (int i = 4; i >= 0; i--) {
-    digitalWrite(d3, vollschritt[i][0]);
-    digitalWrite(d2, vollschritt[i][1]);
-    digitalWrite(d1, vollschritt[i][2]);
-    digitalWrite(d0, vollschritt[i][3]);
-    delay(17);
-  }
-}
-
-void writeHalbschritt(bool forward) {
-  i = (i + forward ? 1 : -1) % 8;
-  digitalWrite(d3, halbschritt[i][0]);
-  digitalWrite(d2, halbschritt[i][1]);
-  digitalWrite(d1, halbschritt[i][2]);
-  digitalWrite(d0, halbschritt[i][3]);
-  delay(17);
-}
-void writeHalbschrittR() {
-  for (int i = 8; i >= 0; i--) {
-    digitalWrite(d3, halbschritt[i][0]);
-    digitalWrite(d2, halbschritt[i][1]);
-    digitalWrite(d1, halbschritt[i][2]);
-    digitalWrite(d0, halbschritt[i][3]);
-    delay(17);
-  }
+void step(bool forward, bool halfstep, int frequency) {
+  int delta = halfstep ? 1 : i % 2 == 1 ? 1 : 2;
+  if (!forward) delta *= -1;
+  int i = (i + delta) % 8;
+  digitalWrite(transmissionDirection, 0);
+  digitalWrite(d3, halfstep[i][0]);
+  digitalWrite(d2, halfstep[i][1]);
+  digitalWrite(d1, halfstep[i][2]);
+  digitalWrite(d0, halfstep[i][3]);
+  delay(1000/frequency);
 }
