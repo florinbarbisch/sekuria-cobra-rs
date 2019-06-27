@@ -28,7 +28,15 @@ bool halfstep[8][4] = {
   {1,1,1,0}
 };
 
-int i = 0;
+// save i of each motor
+int im[] = {
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+};
 
 void setup() {
   pinMode(transmissionDirection, OUTPUT);
@@ -42,7 +50,8 @@ void setup() {
 }
 
 void loop() {
-    
+  step(1, true, true, 100);
+  step(5, true, true, 100);
 }
 
 // Moves the given motor one step. 
@@ -66,23 +75,27 @@ void loop() {
 // the position will then match a full step.
 //
 // The frequency determines how many steps the robot performs per minute.
-void step(int motor, bool forward, bool halfstep, int frequency) {
+void step(int motor, bool isForward, bool isHalfstep, int frequency) {
+  int i = im[motor - 1];
   
-  int delta = halfstep ? 1 : i % 2 == 1 ? 1 : 2;
-  if (!forward) { 
+  int delta = isHalfstep ? 1 : i % 2 == 1 ? 1 : 2;
+  if (!isForward) { 
     delta *= -1; 
   }
-  int i = (i + delta) % 8;
+  i = (i + delta) % 8;
   
   digitalWrite(transmissionDirection, 0);
   
-  digitalWrite(m0, (n & ( 1 << 2 )) >> 2);
-  digitalWrite(m1, (n & ( 1 << 1 )) >> 1);
-  digitalWrite(m2, (n & ( 1 << 0 )) >> 0);
+  digitalWrite(m0, (motor & ( 1 << 2 )) >> 2);
+  digitalWrite(m1, (motor & ( 1 << 1 )) >> 1);
+  digitalWrite(m2, (motor & ( 1 << 0 )) >> 0);
   
   digitalWrite(d3, halfstep[i][0]);
   digitalWrite(d2, halfstep[i][1]);
   digitalWrite(d1, halfstep[i][2]);
   digitalWrite(d0, halfstep[i][3]);
+
+  // write back i
+  im[motor - 1] = i;
   delay(1000/frequency);
 }
