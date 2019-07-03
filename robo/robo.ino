@@ -74,7 +74,7 @@ void loop() {
 // But if the motor is still in a half step which does not match a fullstep, it will only make a halfstep, 
 // the position will then match a full step.
 //
-// The frequency determines how many steps the robot performs per minute.
+// The frequency determines how many steps the robot performs per second.
 void step(int motor, bool isForward, bool isHalfstep, int frequency) {
   int i = im[motor - 1];
   
